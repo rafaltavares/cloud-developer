@@ -1,3 +1,4 @@
+import { any } from 'bluebird';
 import express, { Router, Request, Response } from 'express';
 // import bodyParser from 'body-parser'; deprecated
 const bodyParser = require('body-parser')
@@ -72,10 +73,27 @@ import { Car, cars as cars_list } from './cars';
 
   // @TODO Add an endpoint to GET a list of cars
   // it should be filterable by make with a query paramater
+  app.get("/cars/", (req: Request,res: Response) => {
+  let { make} = req.query;
+  let cars_list = []
 
+  cars_list = cars.filter((car) => car.make === make  );
+
+  
+  
+    return res.send(cars_list);
+  });
   // @TODO Add an endpoint to get a specific car
   // it should require id
   // it should fail gracefully if no matching car is found
+  
+  app.get("/cars/:id",(req:Request,res:Response) => {
+    const id  = parseInt(req.params.id);
+  
+ 
+   const car = cars.filter((car) => car.id === id);
+    return res.send(car);
+  });
 
   /// @TODO Add an endpoint to post a new car to our list
   // it should require id, type, model, and cost
