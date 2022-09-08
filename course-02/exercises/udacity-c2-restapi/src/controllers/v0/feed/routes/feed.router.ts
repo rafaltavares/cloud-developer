@@ -18,13 +18,65 @@ router.get('/', async (req: Request, res: Response) => {
 
 //@TODO
 //Add an endpoint to GET a specific resource by Primary Key
+router.get( "/:id", async ( req: Request, res: Response ) => {
+    // destruct our path params
+    let { id } = req.params;
 
+    // check to make sure the id is set
+    if (!id) { 
+      // respond with an error if not
+      return res.status(400).send(`id is required`);
+    }
+
+    // try to find FeedItem by id
+    const item = await FeedItem.findByPk(id)
+    if (item === null) {
+        return res.status(404).send(`feedItem not found`)
+    }
+    
+
+    //return the feedItem with a sucess status code
+    res.status(200).send(item);
+  } );
 // update a specific resource
 router.patch('/:id', 
     requireAuth, 
     async (req: Request, res: Response) => {
         //@TODO try it yourself
-        res.status(500).send("not implemented")
+        let id = req.params.id;
+        const caption = req.body.caption;
+        const fileName = req.body.url;
+    
+        // check Caption is valid
+        if (!caption) {
+            return res.status(400).send({ message: 'Caption is required or mbalformed',error: caption });
+        }
+    
+        // check Filename is valid
+        if (!fileName) {
+            return res.status(400).send({ message: 'File url is required ',error: fileName  });
+        }
+    
+        
+    // check to make sure the id is set
+    if (!id) { 
+      // respond with an error if not
+      return res.status(400).send(`id is required`);
+    }
+    const item = await FeedItem.findByPk(id)
+    if (item === null) {
+        return res.status(404).send(`feedItem not found`)
+    }
+   
+
+    const update_item = await  item.update({
+        caption: caption,
+        url: fileName
+    }) ;
+    // return update_item;
+    update_item.url = AWS.getGetSignedUrl(update_item.url);
+        res.status(201).send(update_item);
+        //     res.status(500).send("not implemented")
 });
 
 
