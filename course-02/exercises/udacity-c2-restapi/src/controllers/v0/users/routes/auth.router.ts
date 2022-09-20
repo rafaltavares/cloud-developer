@@ -10,6 +10,7 @@ import * as EmailValidator from 'email-validator';
 import { config } from '../../../../config/config';
 import test from 'node:test';
 import { resolve } from 'node:path';
+import { Config } from 'aws-sdk';
 
 const router: Router = Router();
 
@@ -47,7 +48,7 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     
      const token = token_bearer[1];
 
-     return jwt.verify(token, "hello", (err, decoded) => {
+     return jwt.verify(token, config.jwt.secret, (err, decoded) => {
        if (err) {
          return res.status(500).send({ auth: false, message: 'Failed to authenticate.' });
        }
@@ -135,13 +136,6 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 router.get('/', async (req: Request, res: Response) => {
-    let promise = new Promise(function(resolve, reject) {
-        // not taking our time to do the job
-        resolve(123); // immediately give the result: 123
-      });
-      const mh = (v:any) => v;
-      const t = promise.then();
-
-      res.send(`ef ${t}` ); 
+    res.send('auth')
 });
 export const AuthRouter: Router = router;
