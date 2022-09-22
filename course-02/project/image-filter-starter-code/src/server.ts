@@ -35,7 +35,12 @@ import { stringify } from 'querystring';
       return res.status(400)
                 .send(`image_url is required`);
     }
-   const image_filtered_path = await filterImageFromURL(image_url);
+    let image_filtered_path:string ;
+    try {
+      image_filtered_path = await filterImageFromURL(image_url);
+    } catch (error) {
+      return res.status(400).send(`error in the image-filtering proccess: ${error.toString()}`)
+    }
 
    res.sendFile(image_filtered_path,function(){
         setTimeout(function () {
