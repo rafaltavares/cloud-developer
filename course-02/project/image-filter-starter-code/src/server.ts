@@ -30,11 +30,12 @@ import { stringify } from 'querystring';
 
   /**************************************************************************** */
     app.get("/filteredimage", async (req:Request,res:Response) => {
-    let {image_url} = req.query
+    let image_url:string = req.query.image_url
     if ( !image_url ) {
       return res.status(400)
                 .send(`image_url is required`);
     }
+    
     let image_filtered_path:string ;
     try {
       image_filtered_path = await filterImageFromURL(image_url);
@@ -42,7 +43,7 @@ import { stringify } from 'querystring';
       return res.status(400).send(`error in the image-filtering proccess: ${error.toString()}`)
     }
 
-   res.sendFile(image_filtered_path,function(){
+   res.status(200).sendFile(image_filtered_path,function(){
         setTimeout(function () {
           deleteLocalFiles(Array(image_filtered_path))
           }
@@ -55,7 +56,7 @@ import { stringify } from 'querystring';
   
   // Root Endpoint
   // Displays a simple message to the user
-  app.get( "/", async ( req, res ) => {
+  app.get( "/", async ( req:Request, res:Response ) => {
     res.send("try GET /filteredimage?image_url={{}}")
   } );
   
